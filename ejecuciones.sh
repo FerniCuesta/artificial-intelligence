@@ -3,6 +3,8 @@
 # Autor: Fernando Cuesta Bueno 2º A2
 # Asignatura: Inteligencia Artificial
 
+# Actualizado: 28/03/2023 - 10:15
+
 # Script para ejecutar las diferentes pruebas utilizadas en el leaderboard.
 # Los resultados obtenidos son los usados en el leaderboard para calcular la puntuación.
 # Los resultados pueden verse en el archivo especificado en "fichero" (primera línea del script).
