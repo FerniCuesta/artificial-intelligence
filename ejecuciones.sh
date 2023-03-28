@@ -7,7 +7,12 @@
 # 28/03/2023 - 10:15 -> todas las ejecuciones almacenadas en la misma carpeta
 # 28/03/2023 - 13:05 -> las ejecuciones se realizan desde ./practica1 en vez de ./practica1/build. 
 #			Antes de realizar las ejecuciones compila el proyecto de nuevo.
-
+# 28/03/2023 - 15:03 -> (Ángel Sánchez) Añadida distinta funcionalidad dependiendo de si se utiliza
+#			la carpeta build para compilar o no. Basta con cambiar la varible "carpetabuild" de 1 (true) 
+#			a 0 (false) o viceversa. Siempre suponiendo que este script se situa en el directorio raiz del 
+#			proyecto.
+# 28/03/2023 - 15:37 -> (Ángel Sánchez) Se calcula el porcentaje medio de las ejecuciones en cada mapa.
+#
 # Script para ejecutar las diferentes pruebas utilizadas en el leaderboard.
 # Los resultados obtenidos son los usados en el leaderboard para calcular la puntuación.
 # Los resultados pueden verse en el archivo especificado en "fichero" (primera línea del script).
@@ -15,6 +20,8 @@
 
 # Nota: si no aparece el porcentaje descubierto se trata de un 'Segmentation fault'.
 # Espero que os ayude!!
+
+carpetabuild=1 
 
 dia=`date +"%d-%m-%Y"`
 hora=`date +"%H:%M"`
@@ -27,13 +34,25 @@ informacion=informacion.txt
 intermedio=intermedio.txt
 porcentajes=porcentajes.txt
 
+#Para el calculo de las medias
+sumaejecucion=0
+porcentajeactual=0
 
 rm -f $informacion $intermedio $porcentajes
 
 mkdir -p $directorio
 
-cmake CMakeLists.txt
+if [ $carpetabuild -eq 1 ];then
+pathejecucion="./build/practica1SG"
+cd build 
+cmake ..
 make
+cd ..
+elif [ $carpetabuild -eq 0 ];then
+pathejecucion="./practica1SG"
+cmake .
+make
+fi
 
 # ejecuciones mapa30
 
@@ -49,13 +68,18 @@ do
 			if [[ $level -eq 0 ]] || [[ $orientation -eq 0 ]]
 			then
 				echo -e "Mapa30 | Semilla: 0 | Nivel: $level | Coordenadas: (${fila[$i]}, ${columna[$i]}) | Orientación: $orientation | Porcentaje: " >> $informacion
-				./practica1SG ./mapas/mapa30.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
-				awk 'END {print $NF}' $intermedio >> $porcentajes
+				$pathejecucion ./mapas/mapa30.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
+				porcentajeactual=$(awk 'END {print $NF}' $intermedio)
+				echo $porcentajeactual >> $porcentajes
+				sumaejecucion=$(echo "$sumaejecucion+$porcentajeactual" | bc)
 			fi
 		done
 	done
 done
 
+echo "Media mapa 30: " $(echo "scale = 2; $sumaejecucion/30" | bc)  >> $path
+porcentajeactual=0
+sumaejecucion=0
 
 # ejecuciones mapa50
 
@@ -71,12 +95,18 @@ do
 			if [[ $level -eq 0 ]] || [[ $orientation -eq 0 ]]
 			then
 				echo -e "Mapa50 | Semilla: 0 | Nivel: $level | Coordenadas: (${fila[$i]}, ${columna[$i]}) | Orientación: $orientation | Porcentaje: " >> $informacion
-				./practica1SG ./mapas/mapa50.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
-				awk 'END {print $NF}' $intermedio >> $porcentajes
+				$pathejecucion ./mapas/mapa50.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
+				porcentajeactual=$(awk 'END {print $NF}' $intermedio)
+				echo $porcentajeactual >> $porcentajes
+				sumaejecucion=$(echo "$sumaejecucion+$porcentajeactual" | bc)
 			fi
 		done
 	done
 done
+
+echo "Media mapa 50: " $(echo "scale = 2; $sumaejecucion/21" | bc)  >> $path
+porcentajeactual=0
+sumaejecucion=0
 
 # ejecuciones mapa75
 
@@ -92,12 +122,16 @@ do
 			if [[ $level -eq 0 ]] || [[ $orientation -eq 0 ]]
 			then
 				echo -e "Mapa75 | Semilla: 0 | Nivel: $level | Coordenadas: (${fila[$i]}, ${columna[$i]}) | Orientación: $orientation | Porcentaje: " >> $informacion
-				./practica1SG ./mapas/mapa75.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
-				awk 'END {print $NF}' $intermedio >> $porcentajes
+				$pathejecucion ./mapas/mapa75.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
+				porcentajeactual=$(awk 'END {print $NF}' $intermedio)
+				echo $porcentajeactual >> $porcentajes
+				sumaejecucion=$(echo "$sumaejecucion+$porcentajeactual" | bc)
 			fi
 		done
 	done
 done
+
+echo "Media mapa 75: " $(echo "scale = 2; $sumaejecucion/24" | bc)  >> $path
 
 paste $informacion $porcentajes >> $path
 
