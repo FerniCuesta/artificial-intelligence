@@ -3,7 +3,10 @@
 # Autor: Fernando Cuesta Bueno 2º A2
 # Asignatura: Inteligencia Artificial
 
-# Actualizado: 28/03/2023 - 10:15
+# Actualizaciones:
+# 28/03/2023 - 10:15 -> todas las ejecuciones almacenadas en la misma carpeta
+# 28/03/2023 - 13:05 -> las ejecuciones se realizan desde ./practica1 en vez de ./practica1/build. 
+#			Antes de realizar las ejecuciones compila el proyecto de nuevo.
 
 # Script para ejecutar las diferentes pruebas utilizadas en el leaderboard.
 # Los resultados obtenidos son los usados en el leaderboard para calcular la puntuación.
@@ -29,6 +32,9 @@ rm -f $informacion $intermedio $porcentajes
 
 mkdir -p $directorio
 
+cmake CMakeLists.txt
+make
+
 # ejecuciones mapa30
 
 for level in 0 1 2 3;
@@ -43,7 +49,7 @@ do
 			if [[ $level -eq 0 ]] || [[ $orientation -eq 0 ]]
 			then
 				echo -e "Mapa30 | Semilla: 0 | Nivel: $level | Coordenadas: (${fila[$i]}, ${columna[$i]}) | Orientación: $orientation | Porcentaje: " >> $informacion
-				./build/practica1SG ./mapas/mapa30.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
+				./practica1SG ./mapas/mapa30.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
 				awk 'END {print $NF}' $intermedio >> $porcentajes
 			fi
 		done
@@ -65,7 +71,7 @@ do
 			if [[ $level -eq 0 ]] || [[ $orientation -eq 0 ]]
 			then
 				echo -e "Mapa50 | Semilla: 0 | Nivel: $level | Coordenadas: (${fila[$i]}, ${columna[$i]}) | Orientación: $orientation | Porcentaje: " >> $informacion
-				./build/practica1SG ./mapas/mapa50.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
+				./practica1SG ./mapas/mapa50.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
 				awk 'END {print $NF}' $intermedio >> $porcentajes
 			fi
 		done
@@ -86,7 +92,7 @@ do
 			if [[ $level -eq 0 ]] || [[ $orientation -eq 0 ]]
 			then
 				echo -e "Mapa75 | Semilla: 0 | Nivel: $level | Coordenadas: (${fila[$i]}, ${columna[$i]}) | Orientación: $orientation | Porcentaje: " >> $informacion
-				./build/practica1SG ./mapas/mapa75.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
+				./practica1SG ./mapas/mapa75.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
 				awk 'END {print $NF}' $intermedio >> $porcentajes
 			fi
 		done
