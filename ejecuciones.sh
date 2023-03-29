@@ -4,8 +4,8 @@
 # Asignatura: Inteligencia Artificial
 
 # Actualizaciones:
-# 28/03/2023 - 10:15 -> todas las ejecuciones almacenadas en la misma carpeta
-# 28/03/2023 - 13:05 -> las ejecuciones se realizan desde ./practica1 en vez de ./practica1/build. 
+# 28/03/2023 - 10:15 -> Todos los ficheros de ejecuciones se almacenan en la misma carpeta
+# 28/03/2023 - 13:05 -> Las ejecuciones se realizan desde ./practica1 en vez de ./practica1/build. 
 #			Antes de realizar las ejecuciones compila el proyecto de nuevo.
 # 28/03/2023 - 15:03 -> (Ángel Sánchez) Añadida distinta funcionalidad dependiendo de si se utiliza
 #			la carpeta build para compilar o no. Basta con cambiar la varible "carpetabuild" de 1 (true) 
@@ -15,6 +15,7 @@
 #			(suponemos que siempre el mapa 30 se lanza 30 veces, el 50 21 veces y el 75 24 veces)
 # 28/03/2023 - 19:37 -> (Ángel Sánchez) Ahora también se calcula la media en total, de todas las ejecuciones
 #			en todos los mapas
+# 29/03/2023 - 18:20 -> Los cálculos se realizan con variables en vez de con números fijos.
 #
 # Script para ejecutar las diferentes pruebas utilizadas en el leaderboard.
 # Los resultados obtenidos son los usados en el leaderboard para calcular la puntuación.
@@ -37,11 +38,12 @@ informacion=informacion.txt
 intermedio=intermedio.txt
 porcentajes=porcentajes.txt
 
-#Para el calculo de las medias
+# para el calculo de las medias
 mediam30=0
 mediam50=0
 mediam75=0
 sumaejecucion=0
+numejecuciones=0
 porcentajeactual=0
 
 rm -f $informacion $intermedio $porcentajes
@@ -78,15 +80,19 @@ do
 				porcentajeactual=$(awk 'END {print $NF}' $intermedio)
 				echo $porcentajeactual >> $porcentajes
 				sumaejecucion=$(echo "$sumaejecucion+$porcentajeactual" | bc)
+				numejecuciones=$(echo "$numejecuciones+1" | bc)
 			fi
 		done
 	done
 done
 
-mediam30=$(echo "scale = 2; $sumaejecucion/30" | bc)
+mediam30=$(echo "scale = 2; $sumaejecucion/$numejecuciones" | bc)
+
 echo "Media mapa 30: " $mediam30  >> $path
+
 porcentajeactual=0
 sumaejecucion=0
+numejecuciones=0
 
 # ejecuciones mapa50
 
@@ -106,15 +112,17 @@ do
 				porcentajeactual=$(awk 'END {print $NF}' $intermedio)
 				echo $porcentajeactual >> $porcentajes
 				sumaejecucion=$(echo "$sumaejecucion+$porcentajeactual" | bc)
+				numejecuciones=$(echo "$numejecuciones+1" | bc)
 			fi
 		done
 	done
 done
 
-mediam50=$(echo "scale = 2; $sumaejecucion/21" | bc)
+mediam50=$(echo "scale = 2; $sumaejecucion/$numejecuciones" | bc)
 echo "Media mapa 50: " $mediam50  >> $path
 porcentajeactual=0
 sumaejecucion=0
+numejecuciones=0
 
 # ejecuciones mapa75
 
@@ -134,12 +142,13 @@ do
 				porcentajeactual=$(awk 'END {print $NF}' $intermedio)
 				echo $porcentajeactual >> $porcentajes
 				sumaejecucion=$(echo "$sumaejecucion+$porcentajeactual" | bc)
+				numejecuciones=$(echo "$numejecuciones+1" | bc)
 			fi
 		done
 	done
 done
 
-mediam75=$(echo "scale = 2; $sumaejecucion/24" | bc)
+mediam75=$(echo "scale = 2; $sumaejecucion/$numejecuciones" | bc)
 echo "Media mapa 75: " $mediam75  >> $path
 
 mediatresmapas=$(echo "$mediam30+$mediam50+$mediam75" | bc)
