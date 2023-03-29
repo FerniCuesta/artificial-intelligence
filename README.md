@@ -13,3 +13,13 @@ Está basado en el otro script proporcionado por los profesores para enviar nues
 4. Revisa si quieres cambiar alguna otra configuración.
 
 5. Ejecuta desde la carpeta raiz de tu proyecto: `./ejecuciones.sh`
+
+
+### Alternativa
+
+Puedes ejecutar el script directamente con: `bash ejecuciones.sh`  
+
+
+### Para ver los resultados  
+
+Estos se almacenan en la carpeta `ejecuciones` con la extensión `.txt`
