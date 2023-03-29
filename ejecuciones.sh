@@ -12,6 +12,9 @@
 #			a 0 (false) o viceversa. Siempre suponiendo que este script se situa en el directorio raiz del 
 #			proyecto.
 # 28/03/2023 - 15:37 -> (Ángel Sánchez) Se calcula el porcentaje medio de las ejecuciones en cada mapa.
+#			(suponemos que siempre el mapa 30 se lanza 30 veces, el 50 21 veces y el 75 24 veces)
+# 28/03/2023 - 19:37 -> (Ángel Sánchez) Ahora también se calcula la media en total, de todas las ejecuciones
+#			en todos los mapas
 #
 # Script para ejecutar las diferentes pruebas utilizadas en el leaderboard.
 # Los resultados obtenidos son los usados en el leaderboard para calcular la puntuación.
@@ -21,7 +24,7 @@
 # Nota: si no aparece el porcentaje descubierto se trata de un 'Segmentation fault'.
 # Espero que os ayude!!
 
-carpetabuild=1 
+carpetabuild=1
 
 dia=`date +"%d-%m-%Y"`
 hora=`date +"%H:%M"`
@@ -35,6 +38,9 @@ intermedio=intermedio.txt
 porcentajes=porcentajes.txt
 
 #Para el calculo de las medias
+mediam30=0
+mediam50=0
+mediam75=0
 sumaejecucion=0
 porcentajeactual=0
 
@@ -77,7 +83,8 @@ do
 	done
 done
 
-echo "Media mapa 30: " $(echo "scale = 2; $sumaejecucion/30" | bc)  >> $path
+mediam30=$(echo "scale = 2; $sumaejecucion/30" | bc)
+echo "Media mapa 30: " $mediam30  >> $path
 porcentajeactual=0
 sumaejecucion=0
 
@@ -104,7 +111,8 @@ do
 	done
 done
 
-echo "Media mapa 50: " $(echo "scale = 2; $sumaejecucion/21" | bc)  >> $path
+mediam50=$(echo "scale = 2; $sumaejecucion/21" | bc)
+echo "Media mapa 50: " $mediam50  >> $path
 porcentajeactual=0
 sumaejecucion=0
 
@@ -131,7 +139,11 @@ do
 	done
 done
 
-echo "Media mapa 75: " $(echo "scale = 2; $sumaejecucion/24" | bc)  >> $path
+mediam75=$(echo "scale = 2; $sumaejecucion/24" | bc)
+echo "Media mapa 75: " $mediam75  >> $path
+
+mediatresmapas=$(echo "$mediam30+$mediam50+$mediam75" | bc)
+echo "Media de los tres mapas: " $(echo "scale = 2; $mediatresmapas/3" | bc)  >> $path
 
 paste $informacion $porcentajes >> $path
 
