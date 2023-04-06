@@ -25,7 +25,22 @@
 # Nota: si no aparece el porcentaje descubierto se trata de un 'Segmentation fault'.
 # Espero que os ayude!!
 
-carpetabuild=1
+function ProgressBar {
+# Process data
+    let _progress=(${1}*100/${2}*100)/100
+    let _done=(${_progress}*4)/10
+    let _left=40-$_done
+# Build progressbar string lengths
+    _fill=$(printf "%${_done}s")
+    _empty=$(printf "%${_left}s")
+
+# 1.2 Build progressbar strings and print the ProgressBar line
+# 1.2.1 Output example:						   
+# 1.2.1.1 Progress : [████████████████████████████████████████] 100%
+printf "\rProgress : [${_fill// /█}${_empty// /-}] ${_progress}%%"
+}
+
+carpetabuild=0
 
 dia=`date +"%d-%m-%Y"`
 hora=`date +"%H:%M"`
@@ -64,6 +79,9 @@ fi
 
 # ejecuciones mapa30
 
+echo "Ejecuciones mapa30"
+cont=1
+
 for level in 0 1 2 3;
 do
 	for orientation in 0 1 3;
@@ -79,12 +97,18 @@ do
 				$pathejecucion ./mapas/mapa30.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
 				porcentajeactual=$(awk 'END {print $NF}' $intermedio)
 				echo $porcentajeactual >> $porcentajes
-				sumaejecucion=$(echo "$sumaejecucion+$porcentajeactual" | bc)
+				if [ "$porcentajeactual" != "" ] && [ "$sumaejecucion" != "" ]; then
+					sumaejecucion=`echo $sumaejecucion+$porcentajeactual | bc`
+				fi
 				numejecuciones=$(echo "$numejecuciones+1" | bc)
 			fi
+			ProgressBar $cont 60
+			cont=$(($cont+1))
 		done
 	done
 done
+
+echo
 
 mediam30=$(echo "scale = 2; $sumaejecucion/$numejecuciones" | bc)
 
@@ -95,6 +119,9 @@ sumaejecucion=0
 numejecuciones=0
 
 # ejecuciones mapa50
+
+echo "Ejecuciones mapa50"
+cont=1
 
 for level in 0 1 2 3;
 do
@@ -111,12 +138,18 @@ do
 				$pathejecucion ./mapas/mapa50.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
 				porcentajeactual=$(awk 'END {print $NF}' $intermedio)
 				echo $porcentajeactual >> $porcentajes
-				sumaejecucion=$(echo "$sumaejecucion+$porcentajeactual" | bc)
+				if [ "$porcentajeactual" != "" ] && [ "$sumaejecucion" != "" ]; then
+					sumaejecucion=`echo $sumaejecucion+$porcentajeactual | bc`
+				fi
 				numejecuciones=$(echo "$numejecuciones+1" | bc)
 			fi
+			ProgressBar $cont 48
+			cont=$(($cont+1))
 		done
 	done
 done
+
+echo
 
 mediam50=$(echo "scale = 2; $sumaejecucion/$numejecuciones" | bc)
 echo "Media mapa 50: " $mediam50  >> $path
@@ -125,6 +158,9 @@ sumaejecucion=0
 numejecuciones=0
 
 # ejecuciones mapa75
+
+echo "Ejecuciones mapa75"
+cont=1
 
 for level in 0 1 2 3;
 do
@@ -141,12 +177,18 @@ do
 				$pathejecucion ./mapas/mapa75.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
 				porcentajeactual=$(awk 'END {print $NF}' $intermedio)
 				echo $porcentajeactual >> $porcentajes
-				sumaejecucion=$(echo "$sumaejecucion+$porcentajeactual" | bc)
+				if [ "$porcentajeactual" != "" ] && [ "$sumaejecucion" != "" ]; then
+					sumaejecucion=`echo $sumaejecucion+$porcentajeactual | bc`
+				fi
 				numejecuciones=$(echo "$numejecuciones+1" | bc)
 			fi
+			ProgressBar $cont 48
+			cont=$(($cont+1))
 		done
 	done
 done
+
+echo
 
 mediam75=$(echo "scale = 2; $sumaejecucion/$numejecuciones" | bc)
 echo "Media mapa 75: " $mediam75  >> $path
