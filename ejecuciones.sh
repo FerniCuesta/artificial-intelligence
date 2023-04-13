@@ -16,6 +16,12 @@
 # 28/03/2023 - 19:37 -> (Ángel Sánchez) Ahora también se calcula la media en total, de todas las ejecuciones
 #			en todos los mapas
 # 29/03/2023 - 18:20 -> Los cálculos se realizan con variables en vez de con números fijos.
+# 13/04/2023 - 12:47 -> (Ángel Sánchez) Añadida la posibilidad de lanzar el script con los nuevos mapas
+#			para la autoevaluación proporcionados por los profesores. Basta con cambiar la variable "eval"
+#			a 1 ó a 0.
+# 13/04/2023 - 12:56 -> (Ángel Sánchez) Solucionado error que en algunas ejecuciones de mapa75_eval
+# en vez de un porcentaje aparecía "jugador" porque cogía la última palabra de la salida. Esto ocurría
+# porque hay casos en los que el agente aparece encima de un precipicio.
 #
 # Script para ejecutar las diferentes pruebas utilizadas en el leaderboard.
 # Los resultados obtenidos son los usados en el leaderboard para calcular la puntuación.
@@ -26,6 +32,7 @@
 # Espero que os ayude!!
 
 carpetabuild=1
+eval=0
 
 dia=`date +"%d-%m-%Y"`
 hora=`date +"%H:%M"`
@@ -62,6 +69,16 @@ cmake .
 make
 fi
 
+if [ $eval -eq 1 ];then
+m30="./mapas/mapa30_eval.map"
+m50="./mapas/mapa50_eval.map"
+m75="./mapas/mapa75_eval.map"
+elif [ $eval -eq 0 ];then
+m30="./mapas/mapa30.map"
+m50="./mapas/mapa50.map"
+m75="./mapas/mapa75.map"
+fi
+
 # ejecuciones mapa30
 
 for level in 0 1 2 3;
@@ -76,8 +93,11 @@ do
 			if [[ $level -eq 0 ]] || [[ $orientation -eq 0 ]]
 			then
 				echo -e "Mapa30 | Semilla: 0 | Nivel: $level | Coordenadas: (${fila[$i]}, ${columna[$i]}) | Orientación: $orientation | Porcentaje: " >> $informacion
-				$pathejecucion ./mapas/mapa30.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
+				$pathejecucion $m30 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
 				porcentajeactual=$(awk 'END {print $NF}' $intermedio)
+                if [ "$porcentajeactual" == "jugador" ];then
+				porcentajeactual=0
+				fi
 				echo $porcentajeactual >> $porcentajes
 				sumaejecucion=$(echo "$sumaejecucion+$porcentajeactual" | bc)
 				numejecuciones=$(echo "$numejecuciones+1" | bc)
@@ -108,8 +128,11 @@ do
 			if [[ $level -eq 0 ]] || [[ $orientation -eq 0 ]]
 			then
 				echo -e "Mapa50 | Semilla: 0 | Nivel: $level | Coordenadas: (${fila[$i]}, ${columna[$i]}) | Orientación: $orientation | Porcentaje: " >> $informacion
-				$pathejecucion ./mapas/mapa50.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
+				$pathejecucion $m50 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
 				porcentajeactual=$(awk 'END {print $NF}' $intermedio)
+                if [ "$porcentajeactual" == "jugador" ];then
+				porcentajeactual=0
+				fi
 				echo $porcentajeactual >> $porcentajes
 				sumaejecucion=$(echo "$sumaejecucion+$porcentajeactual" | bc)
 				numejecuciones=$(echo "$numejecuciones+1" | bc)
@@ -138,8 +161,11 @@ do
 			if [[ $level -eq 0 ]] || [[ $orientation -eq 0 ]]
 			then
 				echo -e "Mapa75 | Semilla: 0 | Nivel: $level | Coordenadas: (${fila[$i]}, ${columna[$i]}) | Orientación: $orientation | Porcentaje: " >> $informacion
-				$pathejecucion ./mapas/mapa75.map 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
+				$pathejecucion $m75 0 $level ${fila[$i]} ${columna[$i]} $orientation | tail -n1 >> $intermedio
 				porcentajeactual=$(awk 'END {print $NF}' $intermedio)
+                if [ "$porcentajeactual" == "jugador" ];then
+				porcentajeactual=0
+				fi
 				echo $porcentajeactual >> $porcentajes
 				sumaejecucion=$(echo "$sumaejecucion+$porcentajeactual" | bc)
 				numejecuciones=$(echo "$numejecuciones+1" | bc)
